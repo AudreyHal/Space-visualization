@@ -7,6 +7,8 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import earthMap from './textures/earthmap4k.jpg'
 import fairCloud from './textures/fair_clouds_4k.png'
 import starryBackground from './textures/starry_background.jpg'
+import earthNormalMap from './textures/earth_normalmap_flat4k.jpg'
+import earthSpecMap from "./textures/earthspec4k.jpg"
 
 let camera, scene, renderer, cameraControl, cameraBG, sceneBG, composer;
 
@@ -106,8 +108,21 @@ function createEarthMaterial() {
   const earthTexture = new THREE.TextureLoader().load(
     earthMap
   );
-  const earthMaterial = new THREE.MeshPhongMaterial({ map: earthTexture });
+  const earthMaterial = new THREE.MeshPhongMaterial({
+    map: earthTexture
+  });
   earthMaterial.map = earthTexture;
+  var normalMap = THREE.ImageUtils.loadTexture(
+    earthNormalMap);
+  earthMaterial.normalMap = normalMap;
+  earthMaterial.normalScale = new THREE.Vector2(0.5, 0.7);
+
+  var specularMap = THREE.ImageUtils.loadTexture(
+    earthSpecMap
+  );
+
+  earthMaterial.specularMap = specularMap;
+  earthMaterial.specular = new THREE.Color(0x262626);
   return earthMaterial;
 }
 
@@ -130,11 +145,6 @@ function onWindowResize() {
 function animate() {
   cameraControl.update();
 
-  scene.traverse(function (e) {
-    if (e instanceof THREE.DirectionalLight) {
-      // console.log(e);
-    }
-  });
 
   requestAnimationFrame(animate);
   // renderer.render(scene, camera);
